@@ -1,4 +1,5 @@
-# EXPLAINATION: this is a program that summarize news headlines using a webscraper
+# EXPLAINATION: this is a program that summarize news headlines using a webscraper and then add the headlines
+# to a document then saves it and automatically open it.
 
 # Pseudocode
 
