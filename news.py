@@ -20,13 +20,30 @@ if response.status_code == 200:
     headline_tags = soup.find_all('h2', limit=3) 
 
 # Extract and print the headlines
-for i, tag in enumerate(headline_tags, start=1):
-    headline = tag.find('a') # the Philstar headline is located in the <a> tag so i used "a" to find it.
-    if headline:
-        text = headline.text.strip()
-    else:
-        text = tag.text.strip()  
-        headlines.append(text)
-    print(f"Headline {i}: {text}")
+    for i, tag in enumerate(headline_tags, start=1):
+        headline_link = tag.find('a') # the Philstar headline is located in the <a> tag so i used "a" to find it.
+        if headline_link:
+            article_url = headline_link.get('href')
+            # Ensure the URL is absolute
+            if article_url.startswith('/'):
+                article_url = 'https://www.philstar.com' + article_url
+            
+# new modification: Get the 1st paragraph of the headline as a preview of the story.
+
+            # Get the article page
+            article_response = requests.get(article_url)
+            if article_response.status_code == 200:
+                article_soup = BeautifulSoup(article_response.text, 'html.parser')
+                first_paragraph = article_soup.find('p') # The Philstar 1st parag is located in the <p> tag so i used "p" to find it.
+                if first_paragraph:
+                    print(f"Headline {i}: {headline_link.text.strip()}")
+                    print(f"Preview: {first_paragraph.text.strip()}\n")
+                else:
+                    print(f"Headline {i}: {headline_link.text.strip()}")
+                    print("Preview: the preview for this article is currently unavailable.\n")
+            else:
+                print(f"Cannot find the Headline {i}")
+        else:
+            print(f"Headline {i}: unable to access this information")
 else:
-    print("Webpage not found")
+    print("Webpage cannot be found try again later.")
