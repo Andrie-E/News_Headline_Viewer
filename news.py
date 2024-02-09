@@ -3,8 +3,12 @@
 # Pseudocode
 
 # import needed libraries
+import os
 import requests
 from bs4 import BeautifulSoup
+from docx import Document
+from docx.shared import Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 # Provide the link for the news website that would be webscraped
 url = 'https://www.philstar.com/'
@@ -12,7 +16,7 @@ url = 'https://www.philstar.com/'
 # get request
 response = requests.get(url)
 # Create an empty list for the website headlines so it will serve as a holder for the headlines
-headlines = []
+headlines_data = []
 # parse html
 if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -34,20 +38,45 @@ if response.status_code == 200:
             article_response = requests.get(article_url)
             if article_response.status_code == 200:
                 article_soup = BeautifulSoup(article_response.text, 'html.parser')
-                first_paragraph = article_soup.find('p') # The Philstar 1st parag is located in the <p> tag so i used "p" to find it.
+                first_paragraph = article_soup.find('p')  # The Philstar 1st paragraph is located in the <p> tag so i used "p" to find it.
                 if first_paragraph:
-                    print(f"Headline {i}: {headline_link.text.strip()}")
-                    print(f"URL: {article_url}")
-                    print(f"Preview: {first_paragraph.text.strip()}\n")
-                    
+                    first_paragraph_text = first_paragraph.text.strip()
                 else:
-                    print(f"Headline {i}: {headline_link.text.strip()}")
-                    print(f"URL: {article_url}")
-                    print("Preview: the preview for this article is currently unavailable.\n")
-                    
-            else:
-                print(f"Cannot find the Headline {i}")
-        else:
-            print(f"Headline {i}: unable to access this information")
-else:
-    print("Webpage cannot be found try again later.")
+                    first_paragraph_text = "The preview for this article is currently unavailable."
+
+                headlines_data.append({
+                    'title': headline_link.text.strip(),
+                    'url': article_url,
+                    'first_paragraph': first_paragraph_text
+                })
+
+# Create a new Document
+doc = Document()
+doc.add_heading('Scraped Headlines', 0)
+
+for item in headlines_data:
+    # Add headline title
+    title = doc.add_paragraph()
+    run_title = title.add_run(item['title'])
+    run_title.bold = True
+    run_title.font.size = Pt(14)
+
+    # Add URL 
+    doc.add_paragraph(item['url'], style='IntenseQuote')
+
+    # Add first paragraph
+    first_paragraph = doc.add_paragraph(item['first_paragraph'])
+    first_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    first_paragraph.paragraph_format.space_after = Pt(18)  # Adjust spacing after paragraph if needed
+
+    # Adding a line space for separation between articles
+    doc.add_paragraph()
+
+# Save the document
+doc_filename = 'scraped_headlines.docx'
+doc.save(doc_filename)
+
+print("The headlines have been successfully scraped and saved into a Word document.")
+
+# Automatically open the document on Windows
+os.startfile(doc_filename)
