@@ -67,7 +67,7 @@ for item in headlines_data:
     # Add first paragraph
     first_paragraph = doc.add_paragraph(item['first_paragraph'])
     first_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-    first_paragraph.paragraph_format.space_after = Pt(18)  # Adjust spacing after paragraph if needed
+    first_paragraph.paragraph_format.space_after = Pt(18)  
 
     # Adding a line space for separation between articles
     doc.add_paragraph()
