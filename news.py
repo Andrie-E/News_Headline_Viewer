@@ -80,3 +80,6 @@ print("The headlines have been successfully scraped and saved into a Word docume
 
 # Automatically open the document on Windows
 os.startfile(doc_filename)
+
+# Note: in the future, add a function that would automatically print the document and also add a fuction
+# that creates a barcode for every headline that if scanned would re-direct you to that specific headline
