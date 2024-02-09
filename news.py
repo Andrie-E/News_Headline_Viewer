@@ -37,10 +37,14 @@ if response.status_code == 200:
                 first_paragraph = article_soup.find('p') # The Philstar 1st parag is located in the <p> tag so i used "p" to find it.
                 if first_paragraph:
                     print(f"Headline {i}: {headline_link.text.strip()}")
+                    print(f"URL: {article_url}")
                     print(f"Preview: {first_paragraph.text.strip()}\n")
+                    
                 else:
                     print(f"Headline {i}: {headline_link.text.strip()}")
+                    print(f"URL: {article_url}")
                     print("Preview: the preview for this article is currently unavailable.\n")
+                    
             else:
                 print(f"Cannot find the Headline {i}")
         else:
