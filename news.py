@@ -21,7 +21,7 @@ headlines_data = []
 if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    headline_tags = soup.find_all('h2', limit=3) 
+    headline_tags = soup.find_all('h2', limit=4) 
 
 # Extract and print the headlines
     for i, tag in enumerate(headline_tags, start=1):
